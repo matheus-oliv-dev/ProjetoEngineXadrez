@@ -1,124 +1,63 @@
-[![Status do Projeto](https://img.shields.io/badge/status-em%20desenvolvimento-yellow)](https://github.com/MATHEUS111JUNDIAI/ProjetoEngineXadrez)
+[![Status do Projeto](https://img.shields.io/badge/status-conclu%C3%ADdo-brightgreen)](https://github.com/MATHEUS111JUNDIAI/ProjetoEngineXadrez)
 
-# Engine de Análise de Xadrez em Python
+# Engine Híbrida de Xadrez (C++ & Python)
 
 ## 📖 Descrição
 
-Este projeto é uma Inteligência Artificial Clássica para jogar e analisar partidas de xadrez, desenvolvida inteiramente em Python. O sistema é capaz de:
-- Jogar uma partida completa contra um oponente humano.
-- Analisar partidas existentes a partir do formato padrão PGN (Portable Game Notation).
-- Avaliar a qualidade de uma posição com base em heurísticas de material e posicionamento.
-- Gerar visualizações de dados, como gráficos de vantagem, para facilitar a compreensão da dinâmica do jogo.
+Bem-vindo ao **Projeto Engine de Xadrez**! Este repositório contém o código-fonte de uma Inteligência Artificial de Xadrez completa, construída com uma arquitetura híbrida poderosa. O projeto une a elegância e a facilidade de criação de interfaces do **Python/Pygame** com o poder de processamento bruto e velocidade extrema do **C++**.
 
-O núcleo do engine é um algoritmo de busca Minimax otimizado com a técnica de Poda Alfa-Beta.
+O objetivo principal deste projeto foi desenvolver uma IA capaz de calcular variações matemáticas na velocidade da luz (atingindo profundidades de análise altíssimas) mantendo uma interface interativa, responsiva e bonita.
+
+A comunicação entre a Interface e o Motor (Engine) acontece por meio do protocolo universal **UCI** (*Universal Chess Interface*), o mesmo utilizado por gigantes da indústria como *Stockfish* e *Komodo*.
 
 ## ✨ Funcionalidades Principais
 
-* **Jogo Interativo:** Execute `play.py` para jogar uma partida completa contra o engine diretamente no terminal.
-* **Análise de Partidas:** Execute `main.py` para carregar uma partida de um arquivo `partida.pgn`, analisar cada lance e gerar um relatório visual.
-* **Visualização de Dados:** Para cada análise, o programa gera uma barra de vantagem textual no console e salva um gráfico completo da avaliação da partida como uma imagem (`.png`).
+* **Arquitetura Híbrida:** Separação total de responsabilidades. O Python cuida dos gráficos, cliques e loop de eventos, enquanto o C++ frita os circuitos calculando as melhores jogadas através de subprocessos.
+* **8 Níveis de Dificuldade:** Você pode escolher desde a profundidade 1 (iniciante) até a profundidade 8 (nível Grande Mestre).
+* **Threading Assíncrono:** A interface jamais congela. Enquanto o motor C++ pensa nas jogadas mais profundas, a tela do Pygame continua livre e responsiva, operando em threads independentes.
+* **Salvamento PGN:** Exporte e salve suas partidas jogadas contra a Engine em formato `partida_salva.pgn` apenas apertando a tecla `S` a qualquer momento.
+
+## 🧠 Heurísticas de Estado da Arte (C++)
+
+O coração da Engine (o código C++) foi tunado com as heurísticas de otimização de árvore de busca mais poderosas do mundo do xadrez por computador, permitindo cortar milhões de nós desnecessários e avaliar a Profundidade 8 em uma fração de segundo:
+
+1. **Poda Alfa-Beta & Minimax:** A espinha dorsal para avaliação de árvores de jogo.
+2. **Iterative Deepening:** O aprofundamento iterativo ajuda a engine a organizar o seu tempo e encontrar lances bons logo de cara, melhorando a eficiência do Alfa-Beta.
+3. **Transposition Tables (Zobrist Hash):** A engine possui uma "memória" para não ter que recalcular posições que ela já avaliou por meio da transposição de lances.
+4. **Quiescence Search:** Resolve o "Efeito Horizonte". A IA continua analisando lances de captura além da profundidade máxima para garantir que não está cometendo um erro material catastrófico.
+5. **Delta Pruning:** Durante o *Quiescence Search*, a IA ignora completamente capturas fúteis que não trazem vantagem material significativa.
+6. **Lances Assassinos (Killer Moves):** Lances que causam o corte *Beta* são memorizados e testados primeiro em outras ramificações.
+7. **Null Move Pruning (NMP):** A IA tenta passar o próprio turno; se a posição continuar incrivelmente vantajosa, ela assume que é um "corte seguro" e poda o galho inteiro.
+8. **Principal Variation Search (PVS) & Late Move Reductions (LMR):** O verdadeiro segredo da velocidade extrema. Assume-se que o primeiro lance na ordenação já é ótimo, pesquisando os seguintes com "janela nula" e diminuindo a profundidade de busca (*LMR*) para os últimos lances aparentemente inúteis da fila.
 
 ## 🛠️ Tecnologias Utilizadas
 
-* **Python 3:** Linguagem principal do projeto.
-* **python-chess:** Biblioteca utilizada para a representação do tabuleiro, geração de movimentos legais e manipulação de arquivos PGN.
-* **NumPy:** Utilizada para cálculos numéricos eficientes na geração do gráfico de avaliação.
-* **Matplotlib:** Utilizada para a plotagem e visualização do gráfico de avaliação da partida.
+* **C++11:** Usado para construir o executável `EngineCpp.exe` (processamento pesado e algoritmos de poda).
+* **Python 3:** Usado para construir o orquestrador e a tela do jogo.
+* **Pygame:** Renderização dos gráficos e captura dos eventos de mouse e teclado.
+* **python-chess:** Gerenciamento das regras lógicas do tabuleiro (movimentos válidos, PGN, FEN) do lado visual.
+* **PyInstaller:** Usado para empacotar todo o código Python e o executável C++ dentro de um único `.exe` final e portátil.
 
 ## 📂 Estrutura do Projeto
 
-O código foi refatorado em múltiplos módulos para seguir as boas práticas de engenharia de software, promovendo organização, reutilização e manutenibilidade.
-
 ```
 /
-|- constants.py       # "Conhecimento" do engine (valor das peças, tabelas posicionais)
-|- engine.py          # "Cérebro" do engine (algoritmos de avaliação e busca)
-|- visualizer.py      # Funções de apresentação (barra de vantagem, gráfico)
-|- main.py            # Orquestrador da análise de partidas PGN
-|- play.py            # Orquestrador do jogo interativo Humano vs. Engine
-|- partida.pgn        # Arquivo de exemplo para análise
+|- Assets/                    # Sprites das peças e ícones
+|- ChessEngine/
+|  |- ArquivosCpp/            # Código C++ da IA (search.cpp, evaluate.cpp, main.cpp, thc.h)
+|  |- ArquivosPy/             # Interface Python (gui.py)
+|     |- dist/                # Contém o executável FINAL (gui.exe) do jogo
+|- README.md                  # Este documento
 ```
 
-## 🧠 Arquitetura e Conceitos de IA
+## 🚀 Como Executar o Jogo
 
-A inteligência do engine é dividida em módulos lógicos, cada um com uma responsabilidade clara.
+1. **Jogar a versão Final Empacotada (Recomendado):**
+   - Vá até a pasta `ChessEngine/ArquivosPy/dist/`.
+   - Dê um duplo clique no arquivo `gui.exe`.
+   - Selecione sua cor, seu nível e divirta-se!
 
-### `constants.py` - O "Livro de Sabedoria"
-
-Este módulo armazena o conhecimento estático do engine. Ele traduz a sabedoria estratégica do xadrez em números, que são usados pela função de avaliação.
-
-```python
-# Exemplo: Definição do valor material das peças
-piece_value = {
-    'p': 1,  # Peão
-    'n': 3,  # Cavalo
-    'q': 9,  # Rainha
-    # ...
-}
-```
-
-### `engine.py` - O "Cérebro" Pensante
-
-Este módulo contém a lógica principal da IA.
-
-* **Função de Avaliação (`evaluate_board`):** Atua como o "juiz", dando uma nota para qualquer posição do tabuleiro. Ela combina o valor material das peças com um bônus ou penalidade posicional retirado das tabelas em `constants.py`.
-
-    ```python
-    # Trecho da função que combina material e posição
-    total_score += material_score + (positional_score / 100.0)
-    ```
-
-* **Algoritmo de Busca (`minimax_alpha_beta`):** O "estrategista". É um algoritmo recursivo que explora a árvore de lances futuros para encontrar a melhor jogada. A Poda Alfa-Beta é a otimização que torna essa busca eficiente.
-
-    ```python
-    # A linha que implementa a Poda Alfa-Beta, economizando processamento
-    if beta <= alpha:
-        break # "Poda" o galho da árvore de busca
-    ```
-
-### `visualizer.py` - O "Rosto" da Análise
-
-Este módulo é responsável por traduzir a pontuação numérica do engine em formatos visuais e de fácil compreensão para humanos.
-
-```python
-# Trecho que colore as áreas de vantagem no gráfico
-plt.fill_between(move_numbers, history_array, 0, 
-                 where=(history_array >= 0), 
-                 facecolor='white', alpha=0.8)
-
-plt.fill_between(move_numbers, history_array, 0, 
-                 where=(history_array <= 0), 
-                 facecolor='black', alpha=0.8)
-```
-
-## 🚀 Como Executar o Projeto
-
-1.  **Pré-requisitos:**
-    Certifique-se de ter o [Python 3](https://www.python.org/downloads/) instalado no seu sistema.
-
-2.  **Instalar as dependências:**
-    Abra um terminal na pasta do projeto e execute o comando abaixo para instalar as bibliotecas necessárias:
-    ```bash
-    pip install python-chess numpy matplotlib
-    ```
-
-3.  **Para jogar contra o engine:**
-    Execute o script `play.py`.
-    ```bash
-    python play.py
-    ```
-
-4.  **Para analisar uma partida de exemplo:**
-    Certifique-se de ter um arquivo `partida.pgn` na mesma pasta do projeto e execute o script `main.py`.
-    ```bash
-    python main.py
-    ```
-    Um arquivo de imagem com o gráfico da partida (`grafico_avaliacao_aprimorado.png`) será salvo no diretório.
-
-## 🔮 Próximos Passos
-
-Este projeto serve como uma base sólida para futuras expansões, como:
-- Desenvolvimento de uma interface gráfica (GUI) com PyGame ou Tkinter.
-- Implementação de um "livro de aberturas" para jogadas iniciais mais rápidas.
-- Criação de um sistema de otimização de parâmetros (Machine Learning) para ajustar os valores das tabelas posicionais.
-- Substituição da função de avaliação por uma Rede Neural treinada com Aprendizado por Reforço.
+2. **Rodar via Código Fonte (Desenvolvedores):**
+   - Certifique-se de ter compilado o `EngineCpp.exe` usando G++ dentro de `ChessEngine/ArquivosCpp/`.
+   - Na pasta `ChessEngine/ArquivosPy/`, instale as dependências executando `pip install pygame chess`.
+   - Execute o jogo com `python gui.py`.
