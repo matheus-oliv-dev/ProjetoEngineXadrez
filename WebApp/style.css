@@ -193,8 +193,14 @@ select:focus {
     padding: 2rem;
 }
 .fullscreen-mode #myBoard {
-    max-width: 90vh !important; /* Fica gigante até o limite da altura da tela */
+    max-width: 90vh !important;
     width: 90vh !important;
+}
+
+/* Força as peças animadas do chessboard.js (que são jogadas no <body>) a sobreporem TUDO */
+body > img.piece-417db,
+body > img {
+    z-index: 999999 !important;
 }
 
 .white-1e1d7 {
