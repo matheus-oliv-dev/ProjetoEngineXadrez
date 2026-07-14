@@ -47,6 +47,20 @@
                     </select>
                 </div>
 
+                <div class="control-group">
+                    <label for="timeControl">Tempo:</label>
+                    <select id="timeControl">
+                        <option value="none">Sem Timer</option>
+                        <option value="60|0">Bullet 1:00</option>
+                        <option value="180|0">Blitz 3:00</option>
+                        <option value="180|2">Blitz 3:00 + 2s</option>
+                        <option value="300|0">Blitz 5:00</option>
+                        <option value="300|2">Blitz 5:00 + 2s</option>
+                        <option value="600|0">Rápida 10:00</option>
+                        <option value="1800|0">Clássica 30:00</option>
+                    </select>
+                </div>
+
                 <div class="buttons-row" style="flex-wrap: wrap;">
                     <button id="startBtn" class="btn primary">🎮 Nova Partida</button>
                     <button id="flipBtn" class="btn secondary">🔄 Inverter Tabuleiro</button>
@@ -65,7 +79,7 @@
         
         <!-- Lado Direito: O Tabuleiro -->
         <div class="board-container" id="boardWrapper" style="position: relative;">
-            <button id="closeFullscreenBtn" class="btn secondary" style="display: none; position: absolute; top: 20px; right: 20px; z-index: 10000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">❌ Sair da Tela Cheia</button>
+            <button id="closeFullscreenBtn" class="btn secondary" style="display: none; position: absolute; top: 10px; right: 10px; z-index: 10000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">❌ Sair</button>
             
             <div id="gameOverOverlay" style="display: none; position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 5000; flex-direction: column; justify-content: center; align-items: center; border-radius: 8px;">
                 <h2 id="gameOverMessage" style="color: #fff; margin-bottom: 20px; text-align: center; font-size: 2rem;">Fim de Jogo</h2>
@@ -76,7 +90,17 @@
                 </div>
             </div>
 
-            <div id="myBoard" style="width: 100%; max-width: 500px;"></div>
+            <div class="board-area">
+                <div class="player-info top-player" id="topPlayerInfo" style="display: none;">
+                    <span class="clock" id="topClock">00:00</span>
+                </div>
+                
+                <div id="myBoard" style="width: 100%; max-width: 500px;"></div>
+                
+                <div class="player-info bottom-player" id="bottomPlayerInfo" style="display: none;">
+                    <span class="clock" id="bottomClock">00:00</span>
+                </div>
+            </div>
         </div>
     </div>
 
@@ -89,6 +113,6 @@
     <script src="engine.js"></script>
     
     <!-- Script principal do jogo -->
-    <script src="script.js?v=8"></script>
+    <script src="script.js?v=9"></script>
 </body>
 </html>

@@ -193,8 +193,8 @@ select:focus {
     padding: 2rem;
 }
 .fullscreen-mode #myBoard {
-    max-width: 90vh !important;
-    width: 90vh !important;
+    max-width: min(90vw, 80vh) !important;
+    width: min(90vw, 80vh) !important;
 }
 
 /* Força as peças animadas do chessboard.js (que são jogadas no <body>) a sobreporem TUDO */
@@ -210,6 +210,43 @@ body > img {
 .black-3c85d {
     background-color: var(--board-dark);
     color: var(--board-light);
+}
+
+/* Área de Jogo com Relógios */
+.board-area {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+}
+
+.player-info {
+    width: 100%;
+    max-width: 500px;
+    display: flex;
+    justify-content: flex-end;
+    padding: 8px 0;
+}
+
+.fullscreen-mode .player-info {
+    max-width: min(90vw, 80vh) !important;
+}
+
+.clock {
+    background: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    font-size: 1.5rem;
+    font-weight: 700;
+    font-family: monospace;
+    padding: 0.5rem 1rem;
+    border-radius: 8px;
+    box-shadow: inset 0 2px 4px rgba(0,0,0,0.5);
+    border: 2px solid transparent;
+}
+.clock.active {
+    background: #e2e8f0;
+    color: #0f172a;
+    border-color: var(--accent);
 }
 
 /* Destaque para o Click-to-Move */

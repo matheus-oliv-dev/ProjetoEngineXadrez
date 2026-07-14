@@ -7,13 +7,116 @@ var gameStarted = false; // Bloqueia o tabuleiro antes de começar
 
 // Valores das peças para a Vantagem Material
 const pieceValues = {
-  'p': 1,
-  'n': 3,
-  'b': 3,
-  'r': 5,
-  'q': 9,
-  'k': 0
+  'p': 1, 'n': 3, 'b': 3, 'r': 5, 'q': 9, 'k': 0
 };
+
+// ==========================================
+// SISTEMA DE TEMPO (RELÓGIOS)
+// ==========================================
+var timerInterval = null;
+var timeWhite = 0;
+var timeBlack = 0;
+var increment = 0;
+var useTimer = false;
+var lastTick = 0;
+var $whiteClock, $blackClock;
+
+function initTimer() {
+    clearInterval(timerInterval);
+    var timeControl = $('#timeControl').val();
+    if (timeControl === 'none') {
+        useTimer = false;
+        $('#topPlayerInfo, #bottomPlayerInfo').hide();
+        return;
+    }
+    
+    useTimer = true;
+    var parts = timeControl.split('|');
+    var baseSecs = parseInt(parts[0], 10);
+    var incSecs = parseInt(parts[1], 10);
+    
+    timeWhite = baseSecs * 1000;
+    timeBlack = baseSecs * 1000;
+    increment = incSecs * 1000;
+    
+    $('#topPlayerInfo, #bottomPlayerInfo').show();
+    setClockSides();
+    updateClockDisplay();
+}
+
+function setClockSides() {
+    var playerColor = $('#colorSelect').val(); // 'w' ou 'b'
+    if (playerColor === 'w') {
+        $whiteClock = $('#bottomClock');
+        $blackClock = $('#topClock');
+    } else {
+        $whiteClock = $('#topClock');
+        $blackClock = $('#bottomClock');
+    }
+}
+
+function formatTime(ms) {
+    if (ms < 0) ms = 0;
+    var totalSeconds = Math.floor(ms / 1000);
+    var minutes = Math.floor(totalSeconds / 60);
+    var seconds = totalSeconds % 60;
+    var msPart = "";
+    if (ms < 10000 && ms > 0) {
+        var tenths = Math.floor((ms % 1000) / 100);
+        msPart = "." + tenths;
+    }
+    return (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds) + msPart;
+}
+
+function updateClockDisplay() {
+    if (!useTimer) return;
+    $whiteClock.text(formatTime(timeWhite));
+    $blackClock.text(formatTime(timeBlack));
+    
+    $whiteClock.removeClass('active');
+    $blackClock.removeClass('active');
+    
+    if (gameStarted && !game.game_over()) {
+        if (game.turn() === 'w') $whiteClock.addClass('active');
+        else $blackClock.addClass('active');
+    }
+}
+
+function consumeTime(manualElapsed) {
+    if (!useTimer || !gameStarted || game.game_over()) return;
+    
+    var now = performance.now();
+    var elapsed = (manualElapsed !== undefined) ? manualElapsed : (now - lastTick);
+    lastTick = now;
+    
+    if (game.turn() === 'w') {
+        timeWhite -= elapsed;
+        if (timeWhite <= 0) timeOut('w');
+    } else {
+        timeBlack -= elapsed;
+        if (timeBlack <= 0) timeOut('b');
+    }
+    updateClockDisplay();
+}
+
+function addIncrementForLastMove() {
+    if (!useTimer || !gameStarted || game.game_over()) return;
+    if (game.turn() === 'b') { timeWhite += increment; } 
+    else { timeBlack += increment; }
+    updateClockDisplay();
+}
+
+function timeOut(color) {
+    timeWhite = Math.max(0, timeWhite);
+    timeBlack = Math.max(0, timeBlack);
+    gameStarted = false;
+    var winner = color === 'w' ? 'Pretas' : 'Brancas';
+    showGameOverOverlay('Tempo Esgotado! ' + winner + ' vencem.');
+}
+
+function tickTimer() {
+    consumeTime();
+}
 
 // ==========================================
 // VANTAGEM MATERIAL E STATUS
@@ -85,12 +188,18 @@ function makeEngineMove() {
   
   var depth = parseInt($('#depthSelect').val(), 10);
   var fen = game.fen();
-
+  
+  consumeTime(); // Desconta qualquer delay do JS antes de travar
+  
   setTimeout(function() {
+      var thinkStart = performance.now();
       var fenPtr = stringToNewUTF8(fen);
       var movePtr = Module._CalcularMelhorLance(fenPtr, depth);
       var bestMove = UTF8ToString(movePtr);
       _free(fenPtr);
+      var thinkEnd = performance.now();
+      
+      consumeTime(thinkEnd - thinkStart); // Desconta o exato tempo que a IA demorou
       
       var sourceSquare = bestMove.substring(0, 2);
       var targetSquare = bestMove.substring(2, 4);
@@ -102,16 +211,15 @@ function makeEngineMove() {
           promotion: promotion
       });
       
+      addIncrementForLastMove(); // Dá o bônus de tempo da IA
+      lastTick = performance.now(); // Resync para não descontar do humano
+      
       board.position(game.fen());
       isEngineThinking = false;
       updateStatus();
-      
   }, 10);
 }
 
-// ==========================================
-// REGRAS DE MOVIMENTO (DRAG & DROP E CLIQUES)
-// ==========================================
 // ==========================================
 // REGRAS DE MOVIMENTO (DRAG & DROP E CLIQUES)
 // ==========================================
@@ -124,12 +232,11 @@ function removeHighlights() {
 
 function handleSquareClick(square) {
   if (!gameStarted || game.game_over() || isEngineThinking) return;
-  if (game.turn() === engineColor) return; // Humano não pode jogar pela IA
+  if (game.turn() === engineColor) return; 
 
   var piece = game.get(square);
 
   if (selectedSquare === null) {
-    // 1. Clicou numa peça própria pela primeira vez
     if (piece && piece.color === game.turn()) {
       selectedSquare = square;
       removeHighlights();
@@ -141,7 +248,7 @@ function handleSquareClick(square) {
       }
     }
   } else {
-    // 2. Já tinha peça selecionada, tenta mover para a casa clicada
+    consumeTime();
     var move = game.move({
       from: selectedSquare,
       to: square,
@@ -151,9 +258,7 @@ function handleSquareClick(square) {
     removeHighlights();
 
     if (move === null) {
-      // Movimento inválido (ex: clicou em outra peça própria ou lugar errado)
       if (piece && piece.color === game.turn()) {
-        // Seleciona a nova peça em vez disso
         selectedSquare = square;
         $('.square-' + square).addClass('highlight-click');
         
@@ -162,10 +267,10 @@ function handleSquareClick(square) {
           $('.square-' + moves[i].to).addClass('highlight-move');
         }
       } else {
-        selectedSquare = null; // Clicou no vazio, anula a seleção
+        selectedSquare = null;
       }
     } else {
-      // 3. Movimento válido através de clique!
+      addIncrementForLastMove();
       selectedSquare = null;
       board.position(game.fen());
       updateStatus();
@@ -185,13 +290,12 @@ function onDragStart (source, piece, position, orientation) {
 }
 
 function onDrop (source, target) {
-  // Se o source for igual ao target, o usuário apenas "clicou" e soltou a peça na mesma casa
   if (source === target) {
     handleSquareClick(source);
-    return 'snapback'; // Devolve a imagem da peça pro lugar
+    return 'snapback';
   }
 
-  // Se for um "arraste" de verdade para outra casa
+  consumeTime();
   var move = game.move({
     from: source,
     to: target,
@@ -203,6 +307,7 @@ function onDrop (source, target) {
 
   if (move === null) return 'snapback';
 
+  addIncrementForLastMove();
   updateStatus();
   window.setTimeout(makeEngineMove, 250);
 }
@@ -244,7 +349,6 @@ function startNewGame() {
     game.reset();
     gameStarted = true;
     
-    // Destrava o botão de Tela Cheia agora que a partida começou
     $('#fullscreenBtn').prop('disabled', false).text('🔍 Expandir Tela');
     
     var playerColor = $('#colorSelect').val(); // 'w' ou 'b'
@@ -252,6 +356,13 @@ function startNewGame() {
     
     var orientation = (playerColor === 'w') ? 'white' : 'black';
     board.orientation(orientation);
+    
+    // Configura e Inicializa os Relógios
+    initTimer();
+    if (useTimer) {
+        lastTick = performance.now();
+        timerInterval = setInterval(tickTimer, 50);
+    }
     
     board.position(game.fen());
     updateStatus();
