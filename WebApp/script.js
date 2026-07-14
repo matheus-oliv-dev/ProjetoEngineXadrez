@@ -204,20 +204,29 @@ function onSnapEnd () {
   board.position(game.fen());
 }
 
-// Captura cliques em casas vazias e em peças inimigas (onde o chessboard.js ignora o drag)
-$('#myBoard').on('mousedown touchstart', '.square-55d63', function(e) {
-  var square = $(this).attr('data-square');
+// Captura cliques nativamente antes do chessboard.js "engolir" o evento nas peças inimigas
+var myBoardEl = document.getElementById('myBoard');
+
+function boardInteractionHandler(e) {
+  var squareNode = e.target.closest('.square-55d63');
+  if (!squareNode) return;
+
+  var square = squareNode.getAttribute('data-square');
   var piece = game.get(square);
 
-  // Se o usuário clicar na PRÓPRIA peça, deixamos o `onDrop` capturar isso
-  // para não ter conflitos entre o nosso mousedown e o do chessboard.js.
+  // Se for a nossa peça, deixamos o `onDrop` ou drag do chessboard assumir o comando
   if (piece && piece.color === game.turn() && game.turn() !== engineColor) {
      return;
   }
 
-  // Se clicou em casa vazia ou peça inimiga, processa como clique!
+  // Se clicou numa peça INIMIGA ou casa VAZIA, nós paramos o chessboard.js e processamos como Clique!
+  e.stopPropagation();
+  e.preventDefault();
   handleSquareClick(square);
-});
+}
+
+myBoardEl.addEventListener('mousedown', boardInteractionHandler, true);
+myBoardEl.addEventListener('touchstart', boardInteractionHandler, true);
 
 // ==========================================
 // BOTÕES DA INTERFACE (AÇÕES)
@@ -228,17 +237,14 @@ $('#startBtn').on('click', function() {
     gameStarted = true;
     
     var playerColor = $('#colorSelect').val(); // 'w' ou 'b'
-    // Se o jogador escolheu 'w' (Brancas), a engine joga de 'b' (Pretas)
     engineColor = (playerColor === 'w') ? 'b' : 'w';
     
-    // A orientação do tabuleiro acompanha a cor do jogador humano
     var orientation = (playerColor === 'w') ? 'white' : 'black';
     board.orientation(orientation);
     
     board.position(game.fen());
     updateStatus();
     
-    // Se a IA for as brancas, ela joga primeiro
     if (engineColor === 'w') {
         window.setTimeout(makeEngineMove, 500);
     }
@@ -251,14 +257,15 @@ $('#flipBtn').on('click', function() {
 // Tela Cheia (Expandir)
 $('#fullscreenBtn').on('click', function() {
     var wrapper = $('#boardWrapper');
-    if (wrapper.hasClass('fullscreen-mode')) {
-        wrapper.removeClass('fullscreen-mode');
-        $(this).text('🔍 Expandir Tela');
-    } else {
-        wrapper.addClass('fullscreen-mode');
-        $(this).text('❌ Sair da Tela Cheia');
-    }
-    // Força o chessboard.js a recalcular os tamanhos das peças
+    wrapper.addClass('fullscreen-mode');
+    $('#closeFullscreenBtn').show();
+    setTimeout(function() { board.resize(); }, 350); 
+});
+
+$('#closeFullscreenBtn').on('click', function() {
+    var wrapper = $('#boardWrapper');
+    wrapper.removeClass('fullscreen-mode');
+    $(this).hide();
     setTimeout(function() { board.resize(); }, 350); 
 });
 
