@@ -20,6 +20,7 @@ public:
     thc::Move EncontrarMelhorLance(thc::ChessRules &cr, int profundidade);
     
 private:
+    int nivel_dificuldade_global;
     std::unordered_map<uint64_t, TTEntry> tabela_transposicao;
     thc::Move lances_assassinos[64][2];
     

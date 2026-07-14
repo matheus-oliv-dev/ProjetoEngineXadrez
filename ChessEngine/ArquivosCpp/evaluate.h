@@ -15,7 +15,7 @@ const int VALOR_REI = 0;
 
 class Evaluate {
 public:
-    static int AvaliarTabuleiro(const thc::ChessRules &cr);
+    static int AvaliarTabuleiro(thc::ChessRules &cr, int nivel_dificuldade);
 };
 
 } // namespace engine

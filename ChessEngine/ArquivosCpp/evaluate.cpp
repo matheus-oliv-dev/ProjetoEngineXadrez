@@ -70,7 +70,7 @@ const int PST_REI[64] = {
      20, 30, 10,  0,  0, 10, 30, 20
 };
 
-int Evaluate::AvaliarTabuleiro(const thc::ChessRules &cr) {
+int Evaluate::AvaliarTabuleiro(thc::ChessRules &cr, int nivel_dificuldade) {
     int pontuacao_total = 0;
     int material_branco = 0;
     int material_preto = 0;
@@ -132,6 +132,29 @@ int Evaluate::AvaliarTabuleiro(const thc::ChessRules &cr) {
         int dist_reis = std::abs(rank_v - rank_p) + std::abs(file_v - file_p);
         
         pontuacao_total -= (dist_centro * 20) + ((14 - dist_reis) * 10);
+    }
+
+    // --- LÓGICA DE DIFICULDADE PROGRESSIVA (HASH NOISE / MIOPIA ESTOCÁSTICA) ---
+    // Aplica um ruído na visão da máquina baseado no nível, tornando-a capaz de cometer blunders.
+    // O ruído é baseado na Hash64 da posição atual para que a Alpha-Beta pruning não enlouqueça avaliando
+    // a mesma posição com notas diferentes. A mesma posição = O mesmo erro.
+    int margem_erro = 0;
+    switch (nivel_dificuldade) {
+        case 2: margem_erro = 600; break; // Entrega torres e bispos sem ver (Erro enorme)
+        case 3: margem_erro = 300; break; // Entrega peças menores (Erro moderado)
+        case 4: margem_erro = 100; break; // Perde peões ou posicionamento (Erro tático leve)
+        case 5: margem_erro = 50;  break; // Comete erros puramente posicionais (Inacurácia)
+        case 6: margem_erro = 20;  break; // Pequenos vacilos estratégicos
+        case 7: margem_erro = 5;   break; // Quase perfeito
+        case 8: margem_erro = 0;   break; // Máquina de Matar (Implacável)
+        default: margem_erro = 0;
+    }
+
+    if (margem_erro > 0) {
+        uint64_t hash = cr.Hash64Calculate();
+        // Gera um número pseudorandomico entre -margem_erro e +margem_erro deterministicamente
+        int noise = (int)(hash % (margem_erro * 2)) - margem_erro;
+        pontuacao_total += noise;
     }
 
     return pontuacao_total;

@@ -110,10 +110,10 @@ int Search::BuscaQuiescencia(thc::ChessRules &cr, int alfa, int beta, bool eh_jo
         if (score_terminal == thc::TERMINAL_BCHECKMATE) return 99999;
         if (score_terminal == thc::TERMINAL_WSTALEMATE || score_terminal == thc::TERMINAL_BSTALEMATE) return 0;
         
-        return Evaluate::AvaliarTabuleiro(cr);
+        return Evaluate::AvaliarTabuleiro(cr, nivel_dificuldade_global);
     }
     
-    int aval_estatica = Evaluate::AvaliarTabuleiro(cr);
+    int aval_estatica = Evaluate::AvaliarTabuleiro(cr, nivel_dificuldade_global);
     
     if (eh_jogador_maximizador) {
         if (aval_estatica + 1100 < alfa) return alfa; // Delta Pruning
@@ -352,6 +352,7 @@ int Search::MinimaxAlfaBeta(thc::ChessRules &cr, int profundidade, int alfa, int
 }
 
 thc::Move Search::EncontrarMelhorLance(thc::ChessRules &cr, int profundidade) {
+    nivel_dificuldade_global = profundidade;
     tabela_transposicao.clear(); // Previne estouro de memoria
     for (int i=0; i<64; i++) {
         lances_assassinos[i][0].Invalid();
