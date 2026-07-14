@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Engine de Xadrez C++ | WebAssembly</title>
+    
+    <!-- Dependências do CSS (Chessboard.js) -->
+    <link rel="stylesheet" href="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.css">
+    
+    <!-- CSS Customizado -->
+    <link rel="stylesheet" href="style.css?v=2">
+    
+    <!-- Fonte Google: Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Lado Esquerdo: Textos e Controle -->
+        <div class="panel">
+            <header>
+                <div class="badge">PROJETO DE PORTFÓLIO</div>
+                <h1>C++ Chess Engine</h1>
+                <p>Jogue contra uma Inteligência Artificial super-otimizada. Desenvolvida do zero em C++, processando algoritmos de Poda Alfa-Beta, Lances Assassinos e Delta Pruning diretamente no seu navegador através de <strong>WebAssembly</strong>.</p>
+            </header>
+            
+            <div class="controls">
+                <div class="control-group">
+                    <label for="depthSelect">Dificuldade da IA (Profundidade):</label>
+                    <select id="depthSelect">
+                        <option value="1">1 - Macaco</option>
+                        <option value="2">2 - Iniciante</option>
+                        <option value="3">3 - Amador</option>
+                        <option value="4" selected>4 - Intermediário</option>
+                        <option value="5">5 - Avançado</option>
+                        <option value="6">6 - Mestre</option>
+                        <option value="7">7 - Grande Mestre</option>
+                        <option value="8">8 - Lenda (Pode demorar)</option>
+                    </select>
+                </div>
+                
+                <div class="control-group">
+                    <label for="colorSelect">Jogar de:</label>
+                    <select id="colorSelect">
+                        <option value="w">Brancas</option>
+                        <option value="b">Pretas</option>
+                    </select>
+                </div>
+
+                <div class="buttons-row">
+                    <button id="startBtn" class="btn primary">Nova Partida</button>
+                    <button id="flipBtn" class="btn secondary">Inverter Tabuleiro</button>
+                </div>
+            </div>
+            
+            <div id="status" class="status-box">Aguardando início...</div>
+        </div>
+        
+        <!-- Lado Direito: O Tabuleiro -->
+        <div class="board-container">
+            <div id="myBoard" style="width: 100%; max-width: 500px;"></div>
+        </div>
+    </div>
+
+    <!-- Bibliotecas Javascript -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://unpkg.com/@chrisoakman/chessboardjs@1.0.0/dist/chessboard-1.0.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/chess.js/0.10.3/chess.min.js"></script>
+    
+    <!-- Script WASM da Engine (gerado pelo Emscripten) -->
+    <script src="engine.js"></script>
+    
+    <!-- Script principal do jogo -->
+    <script src="script.js?v=2"></script>
+</body>
+</html>
