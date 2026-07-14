@@ -105,13 +105,72 @@ function makeEngineMove() {
 // ==========================================
 // REGRAS DE MOVIMENTO (DRAG & DROP E CLIQUES)
 // ==========================================
+// ==========================================
+// REGRAS DE MOVIMENTO (DRAG & DROP E CLIQUES)
+// ==========================================
+var selectedSquare = null;
+
+function removeHighlights() {
+  $('#myBoard .square-55d63').removeClass('highlight-click');
+  $('#myBoard .square-55d63').removeClass('highlight-move');
+}
+
+function handleSquareClick(square) {
+  if (!gameStarted || game.game_over() || isEngineThinking) return;
+  if (game.turn() === engineColor) return; // Humano não pode jogar pela IA
+
+  var piece = game.get(square);
+
+  if (selectedSquare === null) {
+    // 1. Clicou numa peça própria pela primeira vez
+    if (piece && piece.color === game.turn()) {
+      selectedSquare = square;
+      removeHighlights();
+      $('.square-' + square).addClass('highlight-click');
+      
+      var moves = game.moves({ square: square, verbose: true });
+      for (var i = 0; i < moves.length; i++) {
+        $('.square-' + moves[i].to).addClass('highlight-move');
+      }
+    }
+  } else {
+    // 2. Já tinha peça selecionada, tenta mover para a casa clicada
+    var move = game.move({
+      from: selectedSquare,
+      to: square,
+      promotion: 'q'
+    });
+
+    removeHighlights();
+
+    if (move === null) {
+      // Movimento inválido (ex: clicou em outra peça própria ou lugar errado)
+      if (piece && piece.color === game.turn()) {
+        // Seleciona a nova peça em vez disso
+        selectedSquare = square;
+        $('.square-' + square).addClass('highlight-click');
+        
+        var moves = game.moves({ square: square, verbose: true });
+        for (var i = 0; i < moves.length; i++) {
+          $('.square-' + moves[i].to).addClass('highlight-move');
+        }
+      } else {
+        selectedSquare = null; // Clicou no vazio, anula a seleção
+      }
+    } else {
+      // 3. Movimento válido através de clique!
+      selectedSquare = null;
+      board.position(game.fen());
+      updateStatus();
+      window.setTimeout(makeEngineMove, 250);
+    }
+  }
+}
+
 function onDragStart (source, piece, position, orientation) {
   if (!gameStarted || game.game_over() || isEngineThinking) return false;
-  
-  // Impede o humano de roubar a vez da Engine
   if (game.turn() === engineColor) return false;
 
-  // Permitir apenas mover as próprias peças
   if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
       (game.turn() === 'b' && piece.search(/^w/) !== -1)) {
     return false;
@@ -119,11 +178,21 @@ function onDragStart (source, piece, position, orientation) {
 }
 
 function onDrop (source, target) {
+  // Se o source for igual ao target, o usuário apenas "clicou" e soltou a peça na mesma casa
+  if (source === target) {
+    handleSquareClick(source);
+    return 'snapback'; // Devolve a imagem da peça pro lugar
+  }
+
+  // Se for um "arraste" de verdade para outra casa
   var move = game.move({
     from: source,
     to: target,
     promotion: 'q'
   });
+
+  removeHighlights();
+  selectedSquare = null;
 
   if (move === null) return 'snapback';
 
@@ -135,64 +204,19 @@ function onSnapEnd () {
   board.position(game.fen());
 }
 
-// Lógica de "Clique para Mover" e "Destaque de Lances"
-var selectedSquare = null;
-
-function removeHighlights() {
-  $('#myBoard .square-55d63').removeClass('highlight-click');
-  $('#myBoard .square-55d63').removeClass('highlight-move');
-}
-
-var originalOnDragStart = config ? config.onDragStart : null; // Segurança caso inicialização mude
-
-$('#myBoard').on('click', '.square-55d63', function() {
-  if (!gameStarted || game.game_over() || isEngineThinking) return;
-
+// Captura cliques em casas vazias e em peças inimigas (onde o chessboard.js ignora o drag)
+$('#myBoard').on('mousedown touchstart', '.square-55d63', function(e) {
   var square = $(this).attr('data-square');
   var piece = game.get(square);
 
-  if (selectedSquare === null) {
-    if (piece && piece.color === game.turn()) {
-      var isWhiteTurn = game.turn() === 'w';
-      if ((isWhiteTurn && engineColor === 'b') || (!isWhiteTurn && engineColor === 'w')) {
-        selectedSquare = square;
-        removeHighlights();
-        $(this).addClass('highlight-click');
-        
-        var moves = game.moves({ square: square, verbose: true });
-        for (var i = 0; i < moves.length; i++) {
-          $('.square-' + moves[i].to).addClass('highlight-move');
-        }
-      }
-    }
-  } else {
-    var move = game.move({
-      from: selectedSquare,
-      to: square,
-      promotion: 'q'
-    });
-
-    removeHighlights();
-
-    if (move === null) {
-      if (piece && piece.color === game.turn()) {
-        selectedSquare = square;
-        $(this).addClass('highlight-click');
-        
-        var moves = game.moves({ square: square, verbose: true });
-        for (var i = 0; i < moves.length; i++) {
-          $('.square-' + moves[i].to).addClass('highlight-move');
-        }
-      } else {
-        selectedSquare = null;
-      }
-    } else {
-      selectedSquare = null;
-      board.position(game.fen());
-      updateStatus();
-      window.setTimeout(makeEngineMove, 250);
-    }
+  // Se o usuário clicar na PRÓPRIA peça, deixamos o `onDrop` capturar isso
+  // para não ter conflitos entre o nosso mousedown e o do chessboard.js.
+  if (piece && piece.color === game.turn() && game.turn() !== engineColor) {
+     return;
   }
+
+  // Se clicou em casa vazia ou peça inimiga, processa como clique!
+  handleSquareClick(square);
 });
 
 // ==========================================
