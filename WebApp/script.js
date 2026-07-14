@@ -44,6 +44,11 @@ function calculateMaterial() {
   $('#materialScore').text(materialText);
 }
 
+function showGameOverOverlay(message) {
+  $('#gameOverMessage').text(message);
+  $('#gameOverOverlay').css('display', 'flex');
+}
+
 function updateStatus () {
   var statusHTML = '';
   var moveColor = game.turn() === 'w' ? 'Brancas' : 'Pretas';
@@ -53,9 +58,11 @@ function updateStatus () {
   } else if (game.in_checkmate()) {
     statusHTML = 'Game over, ' + moveColor + ' em xeque-mate.';
     gameStarted = false; // Fim do jogo bloqueia
+    showGameOverOverlay(statusHTML);
   } else if (game.in_draw()) {
     statusHTML = 'Game over, empate.';
     gameStarted = false; // Fim do jogo bloqueia
+    showGameOverOverlay(statusHTML);
   } else {
     statusHTML = 'Vez das ' + moveColor;
     if (game.in_check()) {
@@ -232,7 +239,8 @@ myBoardEl.addEventListener('touchstart', boardInteractionHandler, true);
 // BOTÕES DA INTERFACE (AÇÕES)
 // ==========================================
 
-$('#startBtn').on('click', function() {
+function startNewGame() {
+    $('#gameOverOverlay').hide();
     game.reset();
     gameStarted = true;
     
@@ -251,7 +259,9 @@ $('#startBtn').on('click', function() {
     if (engineColor === 'w') {
         window.setTimeout(makeEngineMove, 500);
     }
-});
+}
+
+$('#startBtn, #overlayRestartBtn').on('click', startNewGame);
 
 $('#flipBtn').on('click', function() {
     board.flip();
@@ -273,18 +283,19 @@ $('#closeFullscreenBtn').on('click', function() {
 });
 
 // Copiar PGN
-$('#copyPgnBtn').on('click', function() {
+$('#copyPgnBtn, #overlayCopyPgnBtn').on('click', function() {
     var pgnData = game.pgn();
     if (!pgnData) pgnData = "Nenhum lance jogado ainda.";
+    var btn = $(this);
     navigator.clipboard.writeText(pgnData).then(function() {
-        var originalText = $('#copyPgnBtn').text();
-        $('#copyPgnBtn').text('✔️ Copiado!');
-        setTimeout(function() { $('#copyPgnBtn').text(originalText); }, 2000);
+        var originalText = btn.text();
+        btn.text('✔️ Copiado!');
+        setTimeout(function() { btn.text(originalText); }, 2000);
     });
 });
 
 // Baixar PGN
-$('#downloadPgnBtn').on('click', function() {
+$('#downloadPgnBtn, #overlayDownloadPgnBtn').on('click', function() {
     var pgnData = game.pgn();
     if (!pgnData) pgnData = "Nenhum lance jogado ainda.";
     
