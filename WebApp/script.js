@@ -346,6 +346,7 @@ myBoardEl.addEventListener('touchstart', boardInteractionHandler, true);
 
 function startNewGame() {
     $('#gameOverOverlay').hide();
+    $('#floatingRestartBtn').hide();
     game.reset();
     gameStarted = true;
     
@@ -372,7 +373,12 @@ function startNewGame() {
     }
 }
 
-$('#startBtn, #overlayRestartBtn').on('click', startNewGame);
+$('#startBtn, #overlayRestartBtn, #floatingRestartBtn').on('click', startNewGame);
+
+$('#hideOverlayBtn').on('click', function() {
+    $('#gameOverOverlay').hide();
+    $('#floatingRestartBtn').show();
+});
 
 $('#flipBtn').on('click', function() {
     board.flip();
