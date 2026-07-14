@@ -1,6 +1,8 @@
 #include "search.h"
 #include "evaluate.h"
 #include <algorithm>
+#include <cstdlib>
+#include <ctime>
 
 namespace engine {
 
@@ -363,6 +365,13 @@ thc::Move Search::EncontrarMelhorLance(thc::ChessRules &cr, int profundidade) {
     for (int d = 1; d <= profundidade; d++) {
         std::vector<thc::Move> lances;
         cr.GenLegalMoveList(lances);
+        
+        // --- NOVO: SE FOR PROFUNDIDADE 1 (ALEATÓRIA) JOGA SEM PENSAR ---
+        if (profundidade == 1 && lances.size() > 0) {
+            srand((unsigned int)time(NULL));
+            int randomIndex = rand() % lances.size();
+            return lances[randomIndex];
+        }
         
         // Pega o melhor lance da TT da profundidade anterior se possivel
         thc::Move* lance_tt_ptr = nullptr;
