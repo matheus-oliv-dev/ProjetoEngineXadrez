@@ -107,6 +107,9 @@ function makeEngineMove() {
 // ==========================================
 function onDragStart (source, piece, position, orientation) {
   if (!gameStarted || game.game_over() || isEngineThinking) return false;
+  
+  // Impede o humano de roubar a vez da Engine
+  if (game.turn() === engineColor) return false;
 
   // Permitir apenas mover as próprias peças
   if ((game.turn() === 'w' && piece.search(/^b/) !== -1) ||
@@ -199,13 +202,19 @@ $('#myBoard').on('click', '.square-55d63', function() {
 $('#startBtn').on('click', function() {
     game.reset();
     gameStarted = true;
-    engineColor = $('#colorSelect').val();
     
-    var orientation = engineColor === 'b' ? 'white' : 'black';
+    var playerColor = $('#colorSelect').val(); // 'w' ou 'b'
+    // Se o jogador escolheu 'w' (Brancas), a engine joga de 'b' (Pretas)
+    engineColor = (playerColor === 'w') ? 'b' : 'w';
+    
+    // A orientação do tabuleiro acompanha a cor do jogador humano
+    var orientation = (playerColor === 'w') ? 'white' : 'black';
     board.orientation(orientation);
+    
     board.position(game.fen());
     updateStatus();
     
+    // Se a IA for as brancas, ela joga primeiro
     if (engineColor === 'w') {
         window.setTimeout(makeEngineMove, 500);
     }
