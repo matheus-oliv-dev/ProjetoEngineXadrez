@@ -236,6 +236,9 @@ $('#startBtn').on('click', function() {
     game.reset();
     gameStarted = true;
     
+    // Destrava o botão de Tela Cheia agora que a partida começou
+    $('#fullscreenBtn').prop('disabled', false).text('🔍 Expandir Tela');
+    
     var playerColor = $('#colorSelect').val(); // 'w' ou 'b'
     engineColor = (playerColor === 'w') ? 'b' : 'w';
     
