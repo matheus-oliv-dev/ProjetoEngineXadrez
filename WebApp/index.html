@@ -79,7 +79,6 @@
         
         <!-- Lado Direito: O Tabuleiro -->
         <div class="board-container" id="boardWrapper" style="position: relative;">
-            <button id="closeFullscreenBtn" class="btn secondary" style="display: none; position: absolute; top: 10px; left: 10px; z-index: 10000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">❌ Sair</button>
             
             <div id="gameOverOverlay" class="game-over-modal">
                 <h2 id="gameOverMessage" style="color: #fff; margin-bottom: 20px; text-align: center; font-size: 1.8rem;">Fim de Jogo</h2>
@@ -93,6 +92,9 @@
             <button id="floatingRestartBtn" class="btn primary" style="display: none; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 4000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">🎮 Jogar Novamente</button>
 
             <div class="board-area">
+                <div style="width: 100%; display: flex; justify-content: flex-start; margin-bottom: 5px;">
+                    <button id="closeFullscreenBtn" class="btn secondary" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">❌ Sair da Tela Cheia</button>
+                </div>
                 <div class="player-info top-player" id="topPlayerInfo" style="display: none;">
                     <span class="clock" id="topClock">00:00</span>
                 </div>
@@ -115,6 +117,6 @@
     <script src="engine.js"></script>
     
     <!-- Script principal do jogo -->
-    <script src="script.js?v=10"></script>
+    <script src="script.js?v=11"></script>
 </body>
 </html>
