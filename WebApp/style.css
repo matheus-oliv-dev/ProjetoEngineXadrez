@@ -147,7 +147,7 @@ select:focus {
 }
 
 .status-box {
-    margin-top: 2rem;
+    margin-top: 1rem;
     padding: 1rem;
     background: rgba(0, 0, 0, 0.3);
     border-radius: 12px;
@@ -156,6 +156,16 @@ select:focus {
     min-height: 52px;
     display: flex;
     align-items: center;
+}
+
+.material-box {
+    margin-top: 2rem;
+    padding: 0.75rem 1rem;
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    border-left: 4px solid #a78bfa;
+    font-weight: 600;
+    color: #e2e8f0;
 }
 
 /* Tabuleiro Styles Overrides */
@@ -167,6 +177,24 @@ select:focus {
     padding: 1rem;
     border-radius: 8px;
     box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    transition: all 0.3s ease;
+}
+
+/* Classe ativada via JS para tela cheia */
+.fullscreen-mode {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9999;
+    background: var(--bg-gradient);
+    align-items: center;
+    padding: 2rem;
+}
+.fullscreen-mode #myBoard {
+    max-width: 90vh !important; /* Fica gigante até o limite da altura da tela */
+    width: 90vh !important;
 }
 
 .white-1e1d7 {
