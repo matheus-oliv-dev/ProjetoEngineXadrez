@@ -110,8 +110,8 @@ function timeOut(color) {
     timeWhite = Math.max(0, timeWhite);
     timeBlack = Math.max(0, timeBlack);
     gameStarted = false;
-    var winner = color === 'w' ? 'Pretas' : 'Brancas';
-    showGameOverOverlay('Tempo Esgotado! ' + winner + ' vencem.');
+    var msg = color === 'w' ? i18n.t('status_timeout_b') : i18n.t('status_timeout_w');
+    showGameOverOverlay(msg);
 }
 
 function tickTimer() {
@@ -137,11 +137,11 @@ function calculateMaterial() {
   }
 
   var diff = scoreWhite - scoreBlack;
-  var materialText = "Material: Equilibrado";
+  var materialText = i18n.t('material_balanced');
   if (diff > 0) {
-    materialText = "Vantagem Material: Brancas (+" + diff + ")";
+    materialText = (i18n.currentLang === 'pt' ? "Vantagem Material: Brancas (+" : "Material Advantage: White (+") + diff + ")";
   } else if (diff < 0) {
-    materialText = "Vantagem Material: Pretas (+" + Math.abs(diff) + ")";
+    materialText = (i18n.currentLang === 'pt' ? "Vantagem Material: Pretas (+" : "Material Advantage: Black (+") + Math.abs(diff) + ")";
   }
   
   $('#materialScore').text(materialText);
@@ -154,22 +154,21 @@ function showGameOverOverlay(message) {
 
 function updateStatus () {
   var statusHTML = '';
-  var moveColor = game.turn() === 'w' ? 'Brancas' : 'Pretas';
 
   if (!gameStarted) {
-    statusHTML = "Clique em 'Nova Partida' para iniciar...";
+    statusHTML = i18n.t('status_start');
   } else if (game.in_checkmate()) {
-    statusHTML = 'Game over, ' + moveColor + ' em xeque-mate.';
+    statusHTML = i18n.t(game.turn() === 'w' ? 'status_checkmate_b' : 'status_checkmate_w');
     gameStarted = false; // Fim do jogo bloqueia
     showGameOverOverlay(statusHTML);
   } else if (game.in_draw()) {
-    statusHTML = 'Game over, empate.';
+    statusHTML = i18n.t(game.in_stalemate() ? 'status_stalemate' : 'status_draw');
     gameStarted = false; // Fim do jogo bloqueia
     showGameOverOverlay(statusHTML);
   } else {
-    statusHTML = 'Vez das ' + moveColor;
+    statusHTML = i18n.t(game.turn() === 'w' ? 'status_white_turn' : 'status_black_turn');
     if (game.in_check()) {
-      statusHTML += ', ' + moveColor + ' está em xeque!';
+      statusHTML += i18n.t('status_check');
     }
   }
 
@@ -184,7 +183,8 @@ function makeEngineMove() {
   if (game.game_over() || !gameStarted) return;
   
   isEngineThinking = true;
-  $status.html('A IA está pensando (WebAssembly)... <span style="display:inline-block; animation: pulse 1s infinite">🧠</span>');
+  var thinkingTxt = i18n.currentLang === 'pt' ? 'A IA está pensando (WebAssembly)...' : 'AI is thinking (WebAssembly)...';
+  $status.html(thinkingTxt + ' <span style="display:inline-block; animation: pulse 1s infinite">🧠</span>');
   
   var depth = parseInt($('#depthSelect').val(), 10);
   var fen = game.fen();
@@ -350,7 +350,7 @@ function startNewGame() {
     game.reset();
     gameStarted = true;
     
-    $('#fullscreenBtn').prop('disabled', false).text('🔍 Expandir Tela');
+    $('#fullscreenBtn').prop('disabled', false).text(i18n.t('btn_fullscreen'));
     
     var playerColor = $('#colorSelect').val(); // 'w' ou 'b'
     engineColor = (playerColor === 'w') ? 'b' : 'w';
@@ -402,11 +402,11 @@ $('#closeFullscreenBtn').on('click', function() {
 // Copiar PGN
 $('#copyPgnBtn, #overlayCopyPgnBtn').on('click', function() {
     var pgnData = game.pgn();
-    if (!pgnData) pgnData = "Nenhum lance jogado ainda.";
+    if (!pgnData) pgnData = i18n.currentLang === 'pt' ? "Nenhum lance jogado ainda." : "No moves played yet.";
     var btn = $(this);
     navigator.clipboard.writeText(pgnData).then(function() {
         var originalText = btn.text();
-        btn.text('✔️ Copiado!');
+        btn.text(i18n.currentLang === 'pt' ? '✔️ Copiado!' : '✔️ Copied!');
         setTimeout(function() { btn.text(originalText); }, 2000);
     });
 });
@@ -414,7 +414,7 @@ $('#copyPgnBtn, #overlayCopyPgnBtn').on('click', function() {
 // Baixar PGN
 $('#downloadPgnBtn, #overlayDownloadPgnBtn').on('click', function() {
     var pgnData = game.pgn();
-    if (!pgnData) pgnData = "Nenhum lance jogado ainda.";
+    if (!pgnData) pgnData = i18n.currentLang === 'pt' ? "Nenhum lance jogado ainda." : "No moves played yet.";
     
     var blob = new Blob([pgnData], { type: 'text/plain' });
     var url = window.URL.createObjectURL(blob);

@@ -19,82 +19,85 @@
         <!-- Lado Esquerdo: Textos e Controle -->
         <div class="panel">
             <header>
-                <a href="https://www.matheusdev.com.br/" class="back-link">⬅ Voltar ao Portfólio</a><br>
-                <div class="badge">PROJETO DE PORTFÓLIO</div>
-                <h1>C++ Chess Engine</h1>
-                <p>Jogue contra uma Inteligência Artificial super-otimizada. Desenvolvida do zero em C++, processando algoritmos de Poda Alfa-Beta, Lances Assassinos e Delta Pruning diretamente no seu navegador através de <strong>WebAssembly</strong>.</p>
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;">
+                    <a href="https://www.matheusdev.com.br/" class="back-link" data-i18n="back_portfolio">⬅ Voltar ao Portfólio</a>
+                    <button id="lang-toggle" class="btn secondary" style="padding: 0.4rem 0.8rem; font-size: 0.85rem; margin-bottom: 1.5rem;"></button>
+                </div>
+                <div class="badge" data-i18n="badge_portfolio">PROJETO DE PORTFÓLIO</div>
+                <h1 data-i18n="main_title">C++ Chess Engine</h1>
+                <p data-i18n="main_desc">Jogue contra uma Inteligência Artificial super-otimizada. Desenvolvida do zero em C++, processando algoritmos de Poda Alfa-Beta, Lances Assassinos e Delta Pruning diretamente no seu navegador através de <strong>WebAssembly</strong>.</p>
             </header>
             
             <div class="controls">
                 <div class="control-group">
-                    <label for="depthSelect">Dificuldade da IA:</label>
+                    <label for="depthSelect" data-i18n="difficulty_label">Dificuldade da IA:</label>
                     <select id="depthSelect">
-                        <option value="1">Muito Fácil</option>
-                        <option value="2">Fácil</option>
-                        <option value="3">Amador</option>
-                        <option value="4" selected>Intermediário</option>
-                        <option value="5">Avançado</option>
-                        <option value="6">Mestre</option>
-                        <option value="7">Grande Mestre</option>
-                        <option value="8">Lenda</option>
+                        <option value="1" data-i18n="diff_1">Muito Fácil</option>
+                        <option value="2" data-i18n="diff_2">Fácil</option>
+                        <option value="3" data-i18n="diff_3">Amador</option>
+                        <option value="4" selected data-i18n="diff_4">Intermediário</option>
+                        <option value="5" data-i18n="diff_5">Avançado</option>
+                        <option value="6" data-i18n="diff_6">Mestre</option>
+                        <option value="7" data-i18n="diff_7">Grande Mestre</option>
+                        <option value="8" data-i18n="diff_8">Lenda</option>
                     </select>
                 </div>
                 
                 <div class="control-group">
-                    <label for="colorSelect">Jogar de:</label>
+                    <label for="colorSelect" data-i18n="color_label">Jogar de:</label>
                     <select id="colorSelect">
-                        <option value="w">Brancas</option>
-                        <option value="b">Pretas</option>
+                        <option value="w" data-i18n="color_white">Brancas</option>
+                        <option value="b" data-i18n="color_black">Pretas</option>
                     </select>
                 </div>
 
                 <div class="control-group">
-                    <label for="timeControl">Tempo:</label>
+                    <label for="timeControl" data-i18n="time_label">Tempo:</label>
                     <select id="timeControl">
-                        <option value="none">Sem Timer</option>
-                        <option value="60|0">Bullet 1:00</option>
-                        <option value="180|0">Blitz 3:00</option>
-                        <option value="180|2">Blitz 3:00 + 2s</option>
-                        <option value="300|0">Blitz 5:00</option>
-                        <option value="300|2">Blitz 5:00 + 2s</option>
-                        <option value="600|0">Rápida 10:00</option>
-                        <option value="1800|0">Clássica 30:00</option>
+                        <option value="none" data-i18n="time_none">Sem Timer</option>
+                        <option value="60|0" data-i18n="time_bullet_1">Bullet 1:00</option>
+                        <option value="180|0" data-i18n="time_blitz_3">Blitz 3:00</option>
+                        <option value="180|2" data-i18n="time_blitz_3_2">Blitz 3:00 + 2s</option>
+                        <option value="300|0" data-i18n="time_blitz_5">Blitz 5:00</option>
+                        <option value="300|2" data-i18n="time_blitz_5_2">Blitz 5:00 + 2s</option>
+                        <option value="600|0" data-i18n="time_rapid_10">Rápida 10:00</option>
+                        <option value="1800|0" data-i18n="time_classic_30">Clássica 30:00</option>
                     </select>
                 </div>
 
                 <div class="buttons-row" style="flex-wrap: wrap;">
-                    <button id="startBtn" class="btn primary">🎮 Nova Partida</button>
-                    <button id="flipBtn" class="btn secondary">🔄 Inverter Tabuleiro</button>
-                    <button id="fullscreenBtn" class="btn secondary" disabled>🔍 Inicie para Expandir</button>
+                    <button id="startBtn" class="btn primary" data-i18n="btn_new_game">🎮 Nova Partida</button>
+                    <button id="flipBtn" class="btn secondary" data-i18n="btn_flip_board">🔄 Inverter Tabuleiro</button>
+                    <button id="fullscreenBtn" class="btn secondary" disabled data-i18n="btn_fullscreen_disabled">🔍 Inicie para Expandir</button>
                 </div>
                 
                 <div class="buttons-row">
-                    <button id="copyPgnBtn" class="btn secondary">📋 Copiar PGN</button>
-                    <button id="downloadPgnBtn" class="btn secondary">💾 Baixar PGN</button>
+                    <button id="copyPgnBtn" class="btn secondary" data-i18n="btn_copy_pgn">📋 Copiar PGN</button>
+                    <button id="downloadPgnBtn" class="btn secondary" data-i18n="btn_download_pgn">💾 Baixar PGN</button>
                 </div>
             </div>
             
-            <div id="materialScore" class="material-box">Material: Equilibrado</div>
-            <div id="status" class="status-box">Clique em 'Nova Partida' para iniciar...</div>
+            <div id="materialScore" class="material-box" data-i18n="material_balanced">Material: Equilibrado</div>
+            <div id="status" class="status-box" data-i18n="status_start">Clique em 'Nova Partida' para iniciar...</div>
         </div>
         
         <!-- Lado Direito: O Tabuleiro -->
         <div class="board-container" id="boardWrapper" style="position: relative;">
             
             <div id="gameOverOverlay" class="game-over-modal">
-                <h2 id="gameOverMessage" style="color: #fff; margin-bottom: 20px; text-align: center; font-size: 1.8rem;">Fim de Jogo</h2>
+                <h2 id="gameOverMessage" style="color: #fff; margin-bottom: 20px; text-align: center; font-size: 1.8rem;" data-i18n="game_over_title">Fim de Jogo</h2>
                 <div style="display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-bottom: 15px;">
-                    <button id="hideOverlayBtn" class="btn secondary">👀 Analisar Tabuleiro</button>
-                    <button id="overlayCopyPgnBtn" class="btn secondary">📋 Copiar PGN</button>
+                    <button id="hideOverlayBtn" class="btn secondary" data-i18n="btn_analyze">👀 Analisar Tabuleiro</button>
+                    <button id="overlayCopyPgnBtn" class="btn secondary" data-i18n="btn_copy_pgn">📋 Copiar PGN</button>
                 </div>
-                <button id="overlayRestartBtn" class="btn primary" style="width: 100%;">🎮 Jogar Novamente</button>
+                <button id="overlayRestartBtn" class="btn primary" style="width: 100%;" data-i18n="btn_play_again">🎮 Jogar Novamente</button>
             </div>
 
-            <button id="floatingRestartBtn" class="btn primary" style="display: none; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 4000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">🎮 Jogar Novamente</button>
+            <button id="floatingRestartBtn" class="btn primary" style="display: none; position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); z-index: 4000; box-shadow: 0 4px 10px rgba(0,0,0,0.5);" data-i18n="btn_play_again">🎮 Jogar Novamente</button>
 
             <div class="board-area">
                 <div style="width: 100%; display: flex; justify-content: flex-start; margin-bottom: 5px;">
-                    <button id="closeFullscreenBtn" class="btn secondary" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">❌ Sair da Tela Cheia</button>
+                    <button id="closeFullscreenBtn" class="btn secondary" style="display: none; padding: 0.4rem 0.8rem; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3);" data-i18n="btn_exit_fullscreen">❌ Sair da Tela Cheia</button>
                 </div>
                 <div class="player-info top-player" id="topPlayerInfo" style="display: none;">
                     <span class="clock" id="topClock">00:00</span>
@@ -116,6 +119,10 @@
     
     <!-- Script WASM da Engine (gerado pelo Emscripten) -->
     <script src="engine.js"></script>
+
+    <!-- Sistema de Internacionalização (i18n) -->
+    <script src="translations.js"></script>
+    <script src="i18n.js"></script>
     
     <!-- Script principal do jogo -->
     <script src="script.js?v=11"></script>
