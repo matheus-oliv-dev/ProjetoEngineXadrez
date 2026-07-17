@@ -1,5 +1,5 @@
 [![Status do Projeto](https://img.shields.io/badge/status-conclu%C3%ADdo-brightgreen)](https://github.com/matheus-oliv-dev/ProjetoEngineXadrez)
-[![Vercel](https://img.shields.io/badge/deploy-Vercel-black?logo=vercel)](https://projeto-engine-xadrez.vercel.app/)
+[![Vercel](https://img.shields.io/badge/deploy-Vercel-black?logo=vercel)](https://xadrez.matheusdev.com.br/)
 
 # ♟️ C++ WebAssembly Chess Engine
 
@@ -58,7 +58,7 @@ ProjetoEngineXadrez/
 
 ### Jogar Online
 O projeto está publicado e funcional. Jogue agora mesmo em:
-👉 **[projeto-engine-xadrez.vercel.app](https://projeto-engine-xadrez.vercel.app/)**
+👉 **[xadrez.matheusdev.com.br](https://xadrez.matheusdev.com.br/)**
 
 ### Compilar Localmente (Para Desenvolvedores)
 Se você deseja modificar a inteligência artificial (C++):
