@@ -19,5 +19,12 @@
     "verification": "Executar o nível 8 e poder clicar na tela/botões livremente enquanto a IA calcula em background (onmessage/postMessage)",
     "state": "pending",
     "evidence": "Nenhuma. Tarefa arquitetural pesada no script.js aguardando tempo do dev."
+  },
+  {
+    "id": "F04",
+    "behavior": "Adicionar um screenshot de alta qualidade (chessboard.png) no README.md",
+    "verification": "Acessar a página do repositório no GitHub e verificar se a imagem renderiza perfeitamente abaixo do título",
+    "state": "pending",
+    "evidence": "Nenhuma."
   }
 ]
