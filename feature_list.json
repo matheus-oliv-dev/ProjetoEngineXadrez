@@ -1,0 +1,23 @@
+[
+  {
+    "id": "F01",
+    "behavior": "A interface traduz perfeitamente do PT pro EN via botão toggle usando atributos data-i18n",
+    "verification": "Abrir o index.html, clicar no botão de idioma e ver os textos mudando sem F5",
+    "state": "passing",
+    "evidence": "Commit edfeffa e scripts i18n em funcionamento na Vercel"
+  },
+  {
+    "id": "F02",
+    "behavior": "Os 8 níveis de dificuldade emitem avaliações intencionalmente cegas baseadas na força configurada",
+    "verification": "Testar a IA no nível 1 (Muito Fácil) e ver ela entregar a Dama, e depois no Nível 8 jogar lances perfeitos",
+    "state": "passing",
+    "evidence": "A função HasheableNoise em evaluate.cpp com o Random Hash de Zobrist"
+  },
+  {
+    "id": "F03",
+    "behavior": "Mover o engine WASM para um Web Worker separado para evitar congelamento da UI",
+    "verification": "Executar o nível 8 e poder clicar na tela/botões livremente enquanto a IA calcula em background (onmessage/postMessage)",
+    "state": "pending",
+    "evidence": "Nenhuma. Tarefa arquitetural pesada no script.js aguardando tempo do dev."
+  }
+]
