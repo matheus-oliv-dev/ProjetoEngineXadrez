@@ -8,7 +8,7 @@ Este repositório contém o código-fonte de uma Inteligência Artificial de Xad
 
 O objetivo principal deste projeto foi desenvolver uma IA capaz de calcular variações matemáticas complexas em altíssima velocidade (avaliando milhares de posições por segundo), sem a necessidade de instalar nada ou depender de servidores backend caros. Tudo acontece diretamente na CPU do cliente.
 
-![Interface do Jogo](WebApp/img/chessboard.png) *(Substitua por um print da sua interface real)*
+![Interface do Jogo](WebApp/img/chessboard.png)
 
 ## ✨ Funcionalidades e Destaques
 
